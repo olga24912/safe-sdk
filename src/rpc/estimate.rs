@@ -1,12 +1,13 @@
 use ethers::types::{Address, Bytes, U256};
 use reqwest::Url;
+use crate::rpc::common::ChecksumAddress;
 
 use super::common::Operations;
 
 #[derive(Debug, serde::Serialize)]
 /// Estimates `safe_tx_gas` for a proposed msig txn
 pub struct EstimateRequest<'a> {
-    pub(crate) to: Address,
+    pub(crate) to: ChecksumAddress,
     pub(crate) value: u64,
     #[serde(serialize_with = "crate::rpc::common::default_empty_bytes_ref")]
     pub(crate) data: Option<&'a Bytes>,
@@ -30,6 +31,7 @@ impl<'a> EstimateRequest<'a> {
 #[derive(Debug, Clone, Copy, serde::Deserialize)]
 pub struct EstimateResponse {
     /// The amount of gas estimated
+    #[serde(rename="safeTxGas")]
     pub safe_tx_gas: U256,
 }
 
