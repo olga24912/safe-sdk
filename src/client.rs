@@ -381,8 +381,8 @@ impl<S: Signer> SigningClient<S> {
         &self,
         tx: impl Into<MetaTransactionData>,
         safe_address: Address,
+        nonce: u64
     ) -> SigningClientResult<MsigTxResponse, S> {
-        let nonce = self.next_nonce(safe_address).await?;
         let proposal = SafeTransactionData {
             core: tx.into(),
             gas: Default::default(),
