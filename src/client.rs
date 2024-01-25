@@ -403,7 +403,7 @@ impl<S: Signer> SigningClient<S> {
             ConfirmationRequest::url(self.url(), tx_hash),
             &confirm_tx
         )
-            .map(|_: Option<()>| ())?;
+            .map(|_: Option<ConfirmationRequest>| ())?;
 
         Ok(self.transaction_info(tx_hash).await?)
     }
