@@ -12,6 +12,7 @@ use ethers::{
 use reqwest::Url;
 
 use crate::rpc::common::{Operations, DOMAIN_SEPARATOR_TYPEHASH};
+use crate::rpc::msig_history::MsigTxResponse;
 
 use super::{
     common::{ChecksumAddress, SAFE_TX_TYPEHASH},
@@ -302,3 +303,50 @@ impl ProposeRequest {
         &self.signature
     }
 }
+
+#[derive(serde::Serialize, serde::Deserialize, Clone, Debug)]
+pub struct ConfirmationRequest {
+    #[serde(with = "rsv_sig_ser")]
+    pub signature: Signature,
+}
+
+impl ConfirmationRequest {
+    pub async fn init<S: Signer>(tx: MsigTxResponse, signer: &S, chain_id: u64) -> ConfirmationRequest {
+        let safe_tx_data = ConfirmationRequest::get_safe_tx_data(tx.clone());
+        let signature = safe_tx_data.sign(signer, tx.safe, chain_id).await.unwrap();
+
+        ConfirmationRequest {
+            signature: signature.signature
+        }
+    }
+
+    pub fn url(root: &Url, safe_tx_hash: H256) -> Url {
+        let path = format!(
+            "api/v1/multisig-transactions/{:?}/confirmations/",
+            safe_tx_hash
+        );
+        let mut url = root.clone();
+        url.set_path(&path);
+        url
+    }
+
+    fn get_safe_tx_data(tx: MsigTxResponse) -> SafeTransactionData {
+        SafeTransactionData {
+            core: MetaTransactionData {
+                to: ChecksumAddress::from(tx.to),
+                value: tx.value.as_u64(),
+                data: tx.data,
+                operation: Some(tx.operation)
+            },
+            gas: SafeGasConfig {
+                safe_tx_gas: tx.safe_tx_gas,
+                base_gas: tx.base_gas,
+                gas_price: tx.gas_price.as_u64(),
+                gas_token: ChecksumAddress::from(tx.gas_token),
+                refund_receiver: ChecksumAddress::from(tx.refund_receiver)
+            },
+            nonce: tx.nonce
+        }
+    }
+}
+

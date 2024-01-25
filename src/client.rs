@@ -19,6 +19,7 @@ use crate::{
         tokens::{TokenInfoFilters, TokenInfoRequest, TokenInfoResponse},
     },
 };
+use crate::rpc::propose::ConfirmationRequest;
 
 /// Gnosis Client Errors
 #[derive(Debug, thiserror::Error)]
@@ -389,5 +390,21 @@ impl<S: Signer> SigningClient<S> {
             nonce,
         };
         self.propose_tx(proposal, safe_address).await
+    }
+
+    pub async fn confirm_tx(&self, tx: MsigTxResponse)
+        -> SigningClientResult<MsigTxResponse, S> {
+        let tx_hash = tx.safe_tx_hash;
+
+        let confirm_tx = ConfirmationRequest::init(tx, &self.signer, self.service.chain_id).await;
+
+        json_post!(
+            self.client,
+            ConfirmationRequest::url(self.url(), tx_hash),
+            &confirm_tx
+        )
+            .map(|_: Option<()>| ())?;
+
+        Ok(self.transaction_info(tx_hash).await?)
     }
 }
