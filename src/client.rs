@@ -256,7 +256,7 @@ impl SafeClient {
 
     /// Request a filtered history of msig txns for the safe
     #[tracing::instrument(skip(self, filters))]
-    pub(crate) async fn filtered_msig_history(
+    pub async fn filtered_msig_history(
         &self,
         safe_address: Address,
         filters: impl IntoIterator<Item = (&'static str, String)>,

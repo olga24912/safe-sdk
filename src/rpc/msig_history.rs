@@ -202,7 +202,7 @@ impl<'a> MsigHistoryFilters<'a> {
     }
 
     /// Instantiate from a client
-    pub(crate) fn new(client: &'a SafeClient) -> Self {
+    pub fn new(client: &'a SafeClient) -> Self {
         Self {
             filters: Default::default(),
             client,
