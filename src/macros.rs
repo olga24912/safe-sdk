@@ -49,7 +49,7 @@ macro_rules! json_get {
         let mut url = $url.clone();
         url.query_pairs_mut().extend_pairs($query);
         tracing::debug!(url = url.as_str(), "Dispatching api request");
-        let resp = $client.get($url).send().await?;
+        let resp = $client.get(url).send().await?;
         let status = resp.status();
         match status.as_u16() {
             0..=399 => {}, // non-error codes
