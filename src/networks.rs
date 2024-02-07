@@ -50,6 +50,9 @@ pub const EWC: TxService = TxService::new("https://safe-transaction-ewc.safe.glo
 /// VOLTA
 pub const VOLTA: TxService = TxService::new("https://safe-transaction-volta.safe.global", 73799);
 
+/// SEPOLIA
+pub const SEPOLIA: TxService = TxService::new("https://safe-transaction-sepolia.safe.global", 11155111);
+
 /// GNOSIS_CHAIN (alias for XDAI)
 pub const GNOSIS_CHAIN: TxService = XDAI;
 /// BINANCE_SMART_CHAIN (alias for BSC)
@@ -57,5 +60,5 @@ pub const BINANCE_SMART_CHAIN: TxService = BSC;
 
 /// Iterable, deduplicated list of known services
 pub const SERVICES: &[TxService] = &[
-    ETHEREUM, XDAI, ARBITRUM, AVALANCHE, AURORA, BSC, OPTIMISM, POLYGON, GOERLI, EWC, VOLTA,
+    ETHEREUM, XDAI, ARBITRUM, AVALANCHE, AURORA, BSC, OPTIMISM, POLYGON, GOERLI, EWC, VOLTA, SEPOLIA
 ];
